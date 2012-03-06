@@ -15,6 +15,10 @@
     </javac>
   </target>
 
+  <target name="run" depends="build,init"  description="run this program">
+    <java classname="edu.iit.cs.cs553.WordCountJ"/>
+  </target>
+
   <target name="clean" description="clean up">
     <delete dir="${bin}" />
   </target>
