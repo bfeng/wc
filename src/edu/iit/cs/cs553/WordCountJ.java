@@ -16,26 +16,30 @@ public class WordCountJ {
     System.out.println("Usuage: <javaClass> <input> <output>");
   }
 
-  private static void addWord(Map<String, Integer> result, String word, Integer times) {
+  private static void mergeWord(Map<String, Integer> result, String word, Integer times) {
     Integer t = result.get(word);
     if(t!=null)
       t += times;
     else
       t = times;
-
     result.put(word, t);
   }
 
-  private static void mergeResult(Map<String, Integer> result, File input) throws IOException {
+  private static void mergeResult(Map<String, Integer> map, File input) throws IOException {
     FileReader fr = new FileReader(input);
     BufferedReader br = new BufferedReader(fr);
 
     String line;
     while((line = br.readLine()) != null) {
-      StringTokenizer st = new StringTokenizer(line, ":");
-      String word = st.nextToken();
-      Integer times = Integer.getInteger(st.nextToken());
-      addWord(result, word, times);
+      String[] result = line.split(" : ", 2);
+      String word = result[0];
+      Integer times;
+      try {
+        times = new Integer(result[1]);
+      } catch (NumberFormatException e) {
+        times = new Integer(0);
+      }
+      mergeWord(map, word, times);
     }
 
     br.close();
@@ -55,12 +59,14 @@ public class WordCountJ {
       print_usuage();
       return;
     }
+    if(!output.exists())
+      output.mkdir();
 
     File[] inputFiles = input.listFiles();
     Thread[] workers = new Thread[inputFiles.length];
 
     for(int i=0;i<inputFiles.length;i++) {
-      workers[i] = new WordCounterThread(inputFiles[i]);
+      workers[i] = new WordCounterThread(inputFiles[i], output.getPath());
       workers[i].start();
     }
 
@@ -72,9 +78,6 @@ public class WordCountJ {
       }
     }
 
-    if(!output.exists())
-      output.mkdir();
-
     File[] outputFiles = output.listFiles();
     Map<String, Integer> result = new HashMap<String, Integer>();
     for(int i=0;i<outputFiles.length;i++) {
@@ -82,17 +85,6 @@ public class WordCountJ {
       mergeResult(result, outputFiles[i]);
     }
 
-    FileWriter fw = new FileWriter(new File(output.getPath() + "/_result_trimmed.txt"));
-    BufferedWriter bw = new BufferedWriter(fw);
-    
-    for(String key: result.keySet()) {
-      bw.write(key);
-      bw.write(" : ");
-      bw.write(result.get(key));
-      bw.newLine();
-    }
-
-    bw.close();
-    fw.close();
+    WordCountUtil.writeMap(result, output.getPath() + "/_result_trimmed");
   }
 }
