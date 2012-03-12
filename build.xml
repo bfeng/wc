@@ -11,12 +11,18 @@
   </target>
 
   <target name="build" depends="init" description="compile the source">
-    <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no">
+    <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no" debug="on" source="1.6">
     </javac>
   </target>
 
   <target name="run" depends="build,init"  description="run this program">
-    <java classname="edu.iit.cs.cs553.WordCountJ"/>
+    <java classname="edu.iit.cs.cs553.WordCountJ">
+      <classpath>
+        <pathelement path="${bin}"/>
+      </classpath>
+      <arg value="${basedir}/input" />
+      <arg value="${basedir}/output" />
+    </java>
   </target>
 
   <target name="clean" description="clean up">
