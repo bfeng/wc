@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="High Performance Word Counter" default="build" basedir=".">
+  <description></description>
+
+  <property name="src"  location="src" />
+  <property name="bin"  location="bin" />
+  <property name="dist" location="dist" />
+  <property name="hadoop_version" value="1.0.1" />
+  <property name="hadoop_home" value="~/hadoop-${hadoop_version}" />
+  
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${bin}" />
+  </target>
+
+  <target name="build" depends="init" description="compile the source">
+    <echoproperties />
+    <javac srcdir="${src}"
+           destdir="${bin}"
+           classpath="${hadoop_home}/hadoop-${hadoop_version}-core.jar"
+           includeAntRuntime="no"
+           debug="on"
+           source="1.6">
+    </javac>
+  </target>
+
+  <target name="run" depends="build,init"  description="run this program">
+    <java classname="edu.iit.cs.cs553.WordCountJ">
+      <classpath>
+        <pathelement path="${bin}"/>
+      </classpath>
+      <arg value="${basedir}/input" />
+      <arg value="${basedir}/output" />
+    </java>
+  </target>
+
+  <target name="dist" depends="build" description="generate the distribution">
+    <mkdir dir="${dist}"/>
+    <jar jarfile="${dist}/WordCounter-${DSTAMP}.jar" basedir="${build}"/>
+  </target>
+
+  <target name="clean" description="clean up">
+    <delete dir="${bin}" />
+    <delete dir="${dist}" />
+  </target>
+
+</project>
