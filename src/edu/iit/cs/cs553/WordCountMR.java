@@ -19,7 +19,7 @@ public class WordCountMR {
         @Override
         public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
             String line = value.toString();
-            StringTokenizer tokenizer = new StringTokenizer(line, "?;\" \t\n\r\f");
+            StringTokenizer tokenizer = WordCountUtil.getWordTokenizer(line);
             while (tokenizer.hasMoreTokens()) {
                 word.set(tokenizer.nextToken());
                 output.collect(word, one);
