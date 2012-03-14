@@ -27,3 +27,7 @@ Compile
 Run
 ===
 `$ java -jar dist/wc.jar`
+
+Run in hadoop
+=============
+`$ bin/hadoop jar wc.jar edu.iit.cs.cs553.WordCountMR input output`
